@@ -84,6 +84,13 @@ function createBullet() {
     b.init()
 }
 
+function createEnemy() {
+    const interval = setInterval(function() {
+        let e = new Enemy()
+        e.init()
+    }, 1000)
+}
+
 function update(){
     if( 39 in keysDown ) {
         spaceshipX += 5;
@@ -123,4 +130,5 @@ function main() {
 
 loadImage();
 setupKeyboardListener();
+createEnemy();
 main();
