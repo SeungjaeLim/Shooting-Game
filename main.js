@@ -30,6 +30,18 @@ function loadImage() {
     gameOverImage.src = "images/gameover.png"
 }
 
+let keysDown = {}
+function setupKeyboardListener(){
+    document.addEventListener("keydown", function(event) {
+        keysDown[event.keyCode] = true;
+        console.log("Keydown", keysDown, event.key, event.keyCode);
+    })
+    document.addEventListener("keyup", function() {
+        delete keysDown[event.keyCode]
+        console.log("Keyup", keysDown, event.key, event.keyCode)
+    })
+}
+
 function render() {
     ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height)
     ctx.drawImage(spaceshipImage, spaceshipX, spaceshipY)
@@ -42,4 +54,5 @@ function main() {
 }
 
 loadImage();
+setupKeyboardListener();
 main();
