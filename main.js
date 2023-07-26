@@ -13,6 +13,22 @@ let backgroundImage, spaceshipImage, bulletImage, enemyImage, gameOverImage;
 let spaceshipX = canvas.width/2 - 32
 let spaceshipY = canvas.height - 64
 
+let bulletList = []
+
+function Bullet(){
+    this.x = 0;
+    this.y = 0;
+    this.init = function() {
+        this.x = spaceshipX + 8
+        this.y = spaceshipY
+
+        bulletList.push(this)
+    }
+    this.update = function() {
+        this.y -= 7;
+    }
+}
+
 function loadImage() {
     backgroundImage = new Image();
     backgroundImage.src="images/background.jpg";
@@ -39,7 +55,17 @@ function setupKeyboardListener(){
     document.addEventListener("keyup", function() {
         delete keysDown[event.keyCode]
         console.log("Keyup", keysDown, event.key, event.keyCode)
+        
+        if(event.keyCode == 32) {
+            createBullet()
+        }
     })
+}
+
+function createBullet() {
+    console.log("bullet")
+    let b = new Bullet()
+    b.init()
 }
 
 function update(){
@@ -62,6 +88,10 @@ function update(){
 function render() {
     ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height)
     ctx.drawImage(spaceshipImage, spaceshipX, spaceshipY)
+
+    for(let i=0; i < bulletList.length; i++) {
+        ctx.drawImage(bulletImage, bulletList[i].x, bulletList[i].y);
+    }
 }
 
 
