@@ -42,6 +42,23 @@ function setupKeyboardListener(){
     })
 }
 
+function update(){
+    if( 39 in keysDown ) {
+        spaceshipX += 5;
+    } //right 
+    if( 37 in keysDown ) {
+        spaceshipX -= 5;
+    } //left
+
+    if(spaceshipX <= 0) {
+        spaceshipX = 0;
+    }
+
+    if( spaceshipX >= canvas.width - 64) {
+        spaceshipX = canvas.width  - 64;
+    }
+}
+
 function render() {
     ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height)
     ctx.drawImage(spaceshipImage, spaceshipX, spaceshipY)
@@ -49,6 +66,7 @@ function render() {
 
 
 function main() {
+    update();
     render();
     requestAnimationFrame(main);
 }
