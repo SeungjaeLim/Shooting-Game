@@ -9,6 +9,10 @@ document.body.appendChild(canvas)
 
 let backgroundImage, spaceshipImage, bulletImage, enemyImage, gameOverImage;
 
+
+let spaceshipX = canvas.width/2 - 32
+let spaceshipY = canvas.height - 64
+
 function loadImage() {
     backgroundImage = new Image();
     backgroundImage.src="images/background.jpg";
@@ -28,6 +32,7 @@ function loadImage() {
 
 function render() {
     ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height)
+    ctx.drawImage(spaceshipImage, spaceshipX, spaceshipY)
 }
 
 
