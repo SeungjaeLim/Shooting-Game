@@ -119,6 +119,10 @@ function render() {
     for(let i=0; i < bulletList.length; i++) {
         ctx.drawImage(bulletImage, bulletList[i].x, bulletList[i].y);
     }
+
+    for(let i=0; i<enemyList.length; i++) {
+        ctx.drawImage(enemyImage, enemyList[i].x, enemyList[i].y)
+    }
 }
 
 
