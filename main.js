@@ -146,7 +146,9 @@ function update(){
 function render() {
     ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height)
     ctx.drawImage(spaceshipImage, spaceshipX, spaceshipY)
-
+    ctx.fillText(`Score:${score}`, 20, 20)
+    ctx.fillStyle = "white"
+    ctx.font = "20px Arial"
     for(let i=0; i < bulletList.length; i++) {
         if(bulletList[i].alive) {
             ctx.drawImage(bulletImage, bulletList[i].x, bulletList[i].y);
