@@ -8,7 +8,7 @@ canvas.height=700;
 document.body.appendChild(canvas)
 
 let backgroundImage, spaceshipImage, bulletImage, enemyImage, gameOverImage;
-
+let gameOver = false;
 
 let spaceshipX = canvas.width/2 - 32
 let spaceshipY = canvas.height - 64
@@ -45,6 +45,9 @@ function Enemy(){
     }
     this.update = function() {
         this.y += 2
+        if(this.y >= canvas.height - 48) {
+            gameOver = true;
+        }
     }
 }
 
@@ -134,9 +137,13 @@ function render() {
 
 
 function main() {
-    update();
-    render();
-    requestAnimationFrame(main);
+    if (!gameOver) {
+        update();
+        render();
+        requestAnimationFrame(main);
+    } else {
+        ctx.drawImage(gameOverImage, 10, 200, 380, 200)
+    }
 }
 
 loadImage();
