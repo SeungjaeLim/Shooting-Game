@@ -29,6 +29,22 @@ function Bullet(){
     }
 }
 
+function generateRandomValue(min, max) {
+    let randomNum = Math.floor(Math.random() * (max - min + 1) ) + min
+    return randomNum;
+}
+
+let enemyList = []
+function Enemy(){
+    this.x = 0;
+    this.y = 0;
+    this.init = function() {
+        this.y = 0
+        this.x = generateRandomValue(0, canvas.width-48)
+        enemyList.push(this)
+    }
+}
+
 function loadImage() {
     backgroundImage = new Image();
     backgroundImage.src="images/background.jpg";
