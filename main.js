@@ -83,6 +83,10 @@ function update(){
     if( spaceshipX >= canvas.width - 64) {
         spaceshipX = canvas.width  - 64;
     }
+
+    for(let i = 0; i < bulletList.length; i++) {
+        bulletList[i].update()
+    }
 }
 
 function render() {
