@@ -9,7 +9,7 @@ document.body.appendChild(canvas)
 
 let backgroundImage, spaceshipImage, bulletImage, enemyImage, gameOverImage;
 
-function loadImage(){
+function loadImage() {
     backgroundImage = new Image();
     backgroundImage.src="images/background.jpg";
 
@@ -24,6 +24,17 @@ function loadImage(){
 
     gameOverImage = new Image();
     gameOverImage.src = "images/gameover.png"
-
-
 }
+
+function render() {
+    ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height)
+}
+
+
+function main() {
+    render();
+    requestAnimationFrame(main);
+}
+
+loadImage();
+main();
