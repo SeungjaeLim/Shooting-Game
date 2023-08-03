@@ -10,6 +10,7 @@ document.body.appendChild(canvas)
 let backgroundImage, spaceshipImage, bulletImage, missileImage, enemyImage, gameOverImage;
 let gameOver = false;
 let score = 0;
+let stage = 1;
 
 let spaceshipX = canvas.width/2 - 32
 let spaceshipY = canvas.height - 100
@@ -44,6 +45,9 @@ function Bullet(){
                 this.x <= enemyList[i].x + 50
             ) {
                 score++;
+                if (score % 10 == 0) {
+                    stage++;
+                }
                 this.alive = false
                 enemyList.splice(i, 1)
             }
@@ -62,7 +66,7 @@ function Missile(){
         missileList.push(this)
     }
     this.update = function() {
-        this.y -= bulletSpeed -6;
+        this.y -= bulletSpeed -4;
     }
 
     this.checkHit = function() {
@@ -75,7 +79,9 @@ function Missile(){
                 this.x <= enemyList[i].x + 50
             ) {
                 score++;
-                // this.alive = false
+                if (score % 10 == 0) {
+                    stage++;
+                }
                 enemyList.splice(i, 1)
             }
         }
@@ -99,7 +105,7 @@ function Enemy(){
         enemyList.push(this)
     }
     this.update = function() {
-        this.y += enemySpeed
+        this.y += enemySpeed + (stage - 1)
         if(this.y >= canvas.height - 70) {
             gameOver = true;
         }
@@ -156,11 +162,25 @@ function createBullet() {
     
 }
 
+function cleanBullet() {
+    for(let i = 0; i < bulletList.length; i++)
+    {
+        if(!bulletList[i].alive || bulletList[i].y <= 0) {
+            bulletList.splice(i, 1)
+        }
+    }
+    for(let i = 0; i < missileList.length; i++) {
+        if(missileList[i].y <= 0) {
+            missileList.splice(i, 1)
+        }
+    }
+}
+
 function createEnemy() {
     const interval = setInterval(function() {
         let e = new Enemy()
         e.init()
-    }, 1000)
+    }, 1100 - stage*100)
 }
 
 function update(){
@@ -196,12 +216,15 @@ function update(){
     for(let i = 0; i < enemyList.length; i++) {
         enemyList[i].update()
     }
+
+    cleanBullet()
 }
 
 function render() {
     ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height)
     ctx.drawImage(spaceshipImage, spaceshipX, spaceshipY)
-    ctx.fillText(`Score:${score}`, 20, 40)
+    ctx.fillText(`Stage:${stage}`, 20, 40)
+    ctx.fillText(`Score:${score}`, 20, 80)
     ctx.fillStyle = "white"
     ctx.font = "20px Arial"
     for(let i=0; i < bulletList.length; i++) {
