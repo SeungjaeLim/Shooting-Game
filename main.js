@@ -3,30 +3,35 @@ let canvas;
 let ctx;
 canvas = document.createElement("canvas")
 ctx = canvas.getContext("2d")
-canvas.width=400;
+canvas.width= 400;
 canvas.height=700;
 document.body.appendChild(canvas)
 
-let backgroundImage, spaceshipImage, bulletImage, enemyImage, gameOverImage;
+let backgroundImage, spaceshipImage, bulletImage, missileImage, enemyImage, gameOverImage;
 let gameOver = false;
 let score = 0;
 
 let spaceshipX = canvas.width/2 - 32
-let spaceshipY = canvas.height - 64
+let spaceshipY = canvas.height - 100
 
 let bulletList = []
+let missileList = []
+let missileStack = 0
+let bulletSpeed = 7
+let enemySpeed = 3
+let spaceshipSpeed = 5
 
 function Bullet(){
     this.x = 0;
     this.y = 0;
     this.init = function() {
-        this.x = spaceshipX + 8
+        this.x = spaceshipX + 7
         this.y = spaceshipY
         this.alive = true
         bulletList.push(this)
     }
     this.update = function() {
-        this.y -= 7;
+        this.y -= bulletSpeed;
     }
 
     this.checkHit = function() {
@@ -34,8 +39,9 @@ function Bullet(){
         {
             if(
                 this.y <= enemyList[i].y && 
-                this.x >= enemyList[i].x && 
-                this.x <= enemyList[i].x + 40 
+                this.y <= enemyList[i].y - 30 && 
+                this.x >= enemyList[i].x - 30 && 
+                this.x <= enemyList[i].x + 50
             ) {
                 score++;
                 this.alive = false
@@ -46,8 +52,40 @@ function Bullet(){
     }
 }
 
+function Missile(){
+    this.x = 0;
+    this.y = 0;
+    this.init = function() {
+        this.x = spaceshipX + 7
+        this.y = spaceshipY
+        this.alive = true
+        missileList.push(this)
+    }
+    this.update = function() {
+        this.y -= bulletSpeed -6;
+    }
+
+    this.checkHit = function() {
+        for (let i=0; i < enemyList.length; i++)
+        {
+            if(
+                this.y <= enemyList[i].y && 
+                this.y <= enemyList[i].y - 30 && 
+                this.x >= enemyList[i].x - 30 && 
+                this.x <= enemyList[i].x + 50
+            ) {
+                score++;
+                // this.alive = false
+                enemyList.splice(i, 1)
+            }
+        }
+        
+    }
+}
+
+
 function generateRandomValue(min, max) {
-    let randomNum = Math.floor(Math.random() * (max - min + 1) ) + min
+    let randomNum = Math.floor(Math.random() * (max - min) ) + min
     return randomNum;
 }
 
@@ -57,12 +95,12 @@ function Enemy(){
     this.y = 0;
     this.init = function() {
         this.y = 0
-        this.x = generateRandomValue(0, canvas.width-48)
+        this.x = generateRandomValue(0, canvas.width-60)
         enemyList.push(this)
     }
     this.update = function() {
-        this.y += 2
-        if(this.y >= canvas.height - 48) {
+        this.y += enemySpeed
+        if(this.y >= canvas.height - 70) {
             gameOver = true;
         }
     }
@@ -77,6 +115,9 @@ function loadImage() {
 
     bulletImage = new Image();
     bulletImage.src = "images/bullet.png"
+
+    missileImage = new Image();
+    missileImage.src = "images/missile.png"
 
     enemyImage = new Image();
     enemyImage.src = "images/enemy.png"
@@ -103,8 +144,16 @@ function setupKeyboardListener(){
 
 function createBullet() {
     console.log("bullet")
-    let b = new Bullet()
-    b.init()
+    if(missileStack%10 == 0)
+    {
+        let m = new Missile()
+        m.init()
+    } else {
+        let b = new Bullet()
+        b.init()
+    }
+    missileStack += 1
+    
 }
 
 function createEnemy() {
@@ -116,18 +165,24 @@ function createEnemy() {
 
 function update(){
     if( 39 in keysDown ) {
-        spaceshipX += 5;
+        spaceshipX += spaceshipSpeed;
     } //right 
     if( 37 in keysDown ) {
-        spaceshipX -= 5;
+        spaceshipX -= spaceshipSpeed;
     } //left
 
     if(spaceshipX <= 0) {
         spaceshipX = 0;
     }
 
-    if( spaceshipX >= canvas.width - 64) {
-        spaceshipX = canvas.width  - 64;
+    if( spaceshipX >= canvas.width - 80) {
+        spaceshipX = canvas.width  - 80;
+    }
+
+    
+    for(let i = 0; i < missileList.length; i++) {
+        missileList[i].update()
+        missileList[i].checkHit()
     }
 
     for(let i = 0; i < bulletList.length; i++) {
@@ -146,13 +201,16 @@ function update(){
 function render() {
     ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height)
     ctx.drawImage(spaceshipImage, spaceshipX, spaceshipY)
-    ctx.fillText(`Score:${score}`, 20, 20)
+    ctx.fillText(`Score:${score}`, 20, 40)
     ctx.fillStyle = "white"
     ctx.font = "20px Arial"
     for(let i=0; i < bulletList.length; i++) {
         if(bulletList[i].alive) {
             ctx.drawImage(bulletImage, bulletList[i].x, bulletList[i].y);
         }
+    }
+    for(let i=0; i < missileList.length; i++) {
+        ctx.drawImage(missileImage, missileList[i].x, missileList[i].y);
     }
 
     for(let i=0; i<enemyList.length; i++) {
@@ -167,7 +225,7 @@ function main() {
         render();
         requestAnimationFrame(main);
     } else {
-        ctx.drawImage(gameOverImage, 10, 200, 380, 200)
+        ctx.drawImage(gameOverImage, 10, 200, 380, 120)
     }
 }
 
