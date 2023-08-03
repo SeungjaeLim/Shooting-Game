@@ -99,13 +99,33 @@ let enemyList = []
 function Enemy(){
     this.x = 0;
     this.y = 0;
+    this.status = 0;
     this.init = function() {
         this.y = 0
         this.x = generateRandomValue(0, canvas.width-60)
         enemyList.push(this)
+        this.status = generateRandomValue(0, 12)
     }
     this.update = function() {
         this.y += enemySpeed + (stage - 1)
+
+        if(this.status < 5) {
+        }
+        if(this.status >= 6 && this.status <=7) {
+            this.x += 2
+        }
+        if(this.status >= 8 && this.status <=9) {
+            this.x -= 2
+        }
+        if(this.status >= 10) {
+            this.x += generateRandomValue(-30, 30)
+        }
+        if (this.x <= 0) {
+            this.x = 0
+        }
+        if (this.x >= canvas.width - 70) {
+            this.x = canvas.width - 70
+        }
         if(this.y >= canvas.height - 70) {
             gameOver = true;
         }
