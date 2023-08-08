@@ -116,13 +116,13 @@ function Enemy(){
         if(this.status < 5) {
         }
         if(this.status >= 6 - (stage - 1) && this.status <=7 - (stage - 1)) {
-            this.x += this.dir * 2 + (stage - 1)
+            this.x += this.dir * (2 + (stage - 1))
         }
         if(this.status >= 8 - (stage - 1) && this.status <=9 - (stage - 1)) {
-            this.x -= this.dir * 2 + (stage - 1)
+            this.x -= this.dir * (2 + (stage - 1))
         }
         if(this.status >= 10) {
-            this.x += this.dir*generateRandomValue(2, 4) + (stage - 1)
+            this.x += this.dir*(generateRandomValue(2, 4) + (stage - 1))
             this.stack ++
             if(this.stack > 50){
                 this.dir *= -1
@@ -329,6 +329,9 @@ function main() {
         render();
         requestAnimationFrame(main);
     } else {
+        ctx.fillText('아무 키나 다시 눌러 시작!', 90, 500)
+        ctx.fillStyle = "white"
+        ctx.font = "20px Arial"
         ctx.drawImage(gameOverImage, 10, 200, 380, 100)
     }
 }
