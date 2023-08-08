@@ -9,6 +9,8 @@ document.body.appendChild(canvas)
 
 let backgroundImage, spaceshipImage, bulletImage, missileImage, enemyImage, gameOverImage;
 let gameOver = false;
+let heart = 3;
+
 let score = 0;
 let stage = 1;
 
@@ -18,7 +20,7 @@ let spaceshipY = canvas.height - 100
 let bulletList = []
 let missileList = []
 let missileStack = 0
-let bulletSpeed = 7
+let bulletSpeed = 5
 let enemySpeed = 3
 let spaceshipSpeed = 5
 
@@ -66,7 +68,7 @@ function Missile(){
         missileList.push(this)
     }
     this.update = function() {
-        this.y -= bulletSpeed -4;
+        this.y -= bulletSpeed + 3;
     }
 
     this.checkHit = function() {
@@ -103,6 +105,8 @@ function Enemy(){
     this.init = function() {
         this.y = 0
         this.x = generateRandomValue(0, canvas.width-60)
+        this.dir = 1
+        this.stack = 0
         enemyList.push(this)
         this.status = generateRandomValue(0, 12)
     }
@@ -111,23 +115,35 @@ function Enemy(){
 
         if(this.status < 5) {
         }
-        if(this.status >= 6 && this.status <=7) {
-            this.x += 2
+        if(this.status >= 6 - (stage - 1) && this.status <=7 - (stage - 1)) {
+            this.x += this.dir * 2 + (stage - 1)
         }
-        if(this.status >= 8 && this.status <=9) {
-            this.x -= 2
+        if(this.status >= 8 - (stage - 1) && this.status <=9 - (stage - 1)) {
+            this.x -= this.dir * 2 + (stage - 1)
         }
         if(this.status >= 10) {
-            this.x += generateRandomValue(-30, 30)
+            this.x += this.dir*generateRandomValue(2, 4) + (stage - 1)
+            this.stack ++
+            if(this.stack > 50){
+                this.dir *= -1
+                this.stack = 0
+            }
         }
         if (this.x <= 0) {
             this.x = 0
+            this.dir *= -1
+            
         }
-        if (this.x >= canvas.width - 70) {
-            this.x = canvas.width - 70
+        if (this.x >= canvas.width - 80) {
+            this.x = canvas.width - 80
+            this.dir *= -1
         }
-        if(this.y >= canvas.height - 70) {
-            gameOver = true;
+        if(this.y == canvas.height - 70) {
+            heart--
+            console.log(heart)
+            if(heart == 0) {
+                gameOver = true
+            }
         }
     }
 }
@@ -150,6 +166,12 @@ function loadImage() {
 
     gameOverImage = new Image();
     gameOverImage.src = "images/gameover.png"
+
+    heartImage = new Image();
+    heartImage.src = "images/heart.png"
+
+    emptyHeartImage = new Image()
+    emptyHeartImage.src = "images/emptyheart.png"
 }
 
 let keysDown = {}
@@ -185,13 +207,21 @@ function createBullet() {
 function cleanBullet() {
     for(let i = 0; i < bulletList.length; i++)
     {
-        if(!bulletList[i].alive || bulletList[i].y <= 0) {
+        if(!bulletList[i].alive || bulletList[i].y <= -30) {
             bulletList.splice(i, 1)
         }
     }
     for(let i = 0; i < missileList.length; i++) {
         if(missileList[i].y <= 0) {
             missileList.splice(i, 1)
+        }
+    }
+}
+
+function cleanEnemy() {
+    for(let i = 0; i < enemyList.length; i++) {
+        if(enemyList[i].y >= canvas.height - 70 ) {           
+            enemyList.splice(i, 1)
         }
     }
 }
@@ -238,11 +268,32 @@ function update(){
     }
 
     cleanBullet()
+    cleanEnemy()
 }
 
 function render() {
     ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height)
     ctx.drawImage(spaceshipImage, spaceshipX, spaceshipY)
+    if(heart == 3) {
+        ctx.drawImage(heartImage, canvas.width - 60, 20)
+        ctx.drawImage(heartImage, canvas.width - 105, 20)
+        ctx.drawImage(heartImage, canvas.width - 150, 20)
+    }
+    else if(heart == 2) {
+        ctx.drawImage(heartImage, canvas.width - 60, 20)
+        ctx.drawImage(heartImage, canvas.width - 105, 20)
+        ctx.drawImage(emptyHeartImage, canvas.width - 150, 20)
+    }
+    else if (heart == 1) {
+        ctx.drawImage(heartImage, canvas.width - 60, 20)
+        ctx.drawImage(emptyHeartImage, canvas.width - 105, 20)
+        ctx.drawImage(emptyHeartImage, canvas.width - 150, 20)
+    }
+    else {
+        ctx.drawImage(emptyHeartImage, canvas.width - 60, 20)
+        ctx.drawImage(emptyHeartImage, canvas.width - 105, 20)
+        ctx.drawImage(emptyHeartImage, canvas.width - 150, 20)
+    }
     ctx.fillText(`Stage:${stage}`, 20, 40)
     ctx.fillText(`Score:${score}`, 20, 80)
     ctx.fillStyle = "white"
@@ -268,7 +319,7 @@ function main() {
         render();
         requestAnimationFrame(main);
     } else {
-        ctx.drawImage(gameOverImage, 10, 200, 380, 120)
+        ctx.drawImage(gameOverImage, 10, 200, 380, 100)
     }
 }
 
