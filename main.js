@@ -184,8 +184,18 @@ function setupKeyboardListener(){
         delete keysDown[event.keyCode]
         console.log("Keyup", keysDown, event.key, event.keyCode)
         
-        if(event.keyCode == 32) {
+        if(!gameOver && event.keyCode == 32) {
             createBullet()
+        }
+        else if(gameOver) {
+            gameOver = false
+            score = 0
+            stage = 1
+            heart = 3
+            bulletList = []
+            enemyList = []
+            missileList = []
+            main()
         }
     })
 }
